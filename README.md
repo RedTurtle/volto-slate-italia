@@ -1,6 +1,7 @@
 # volto-slate-italia
 
-## Introduction
+A Volto addon that applies AGID styles for slate.
+
 
 ## Development
 
