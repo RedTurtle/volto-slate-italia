@@ -1,6 +1,6 @@
 {
   "name": "volto-slate-italia",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "volto-slate-italia: Volto add-on",
   "main": "src/index.js",
   "license": "MIT",
