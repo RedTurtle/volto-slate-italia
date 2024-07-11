@@ -18,6 +18,7 @@ import { setPluginOptions } from '@plone/volto-slate/actions';
 import { PositionedToolbar } from '@plone/volto-slate/editor/ui';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
 import { simpleLinkDeserializer } from 'volto-slate-italia/config/Slate/Link/deserializer';
+import './link-form.scss';
 
 const LinkEditor = (props) => {
   const { editor, pluginId, getActiveElement, unwrapElement, insertElement } =
