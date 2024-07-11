@@ -14,7 +14,7 @@ body.cms-ui .link-form-container {
       .ui.icon.button:focus,
       .ui.basic.button:focus {
         border-radius: 0;
-        outline: solid 2px $focus-outline-color;
+        outline: solid 2px var(--focus-outline-color);
       }
 
       .cancel .icon {
@@ -64,7 +64,7 @@ body.cms-ui .link-form-container {
 
       .ui.basic.button:focus {
         border-radius: 0;
-        outline: solid 2px $focus-outline-color;
+        outline: solid 2px var(--focus-outline-color);
       }
     }
   }
