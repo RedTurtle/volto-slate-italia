@@ -3,13 +3,15 @@
  * CUSTOMIZATIONS:
  *  - rimossi i bottoni di allinemento, textlarger e blockquote perchè non funzionano nel widget e non servono in questi campi
  *  - aggiunta la classe public-ui
+ * - use Provider from react-intl-redux instead from react-redux
  */
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import configureStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
-import { Provider, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { Provider } from 'react-intl-redux';
 import { defineMessages, injectIntl } from 'react-intl';
 
 import { FormFieldWrapper } from '@plone/volto/components';
@@ -60,7 +62,7 @@ const HtmlSlateWidget = (props) => {
     (value) => {
       const mockStore = configureStore();
       const html = ReactDOMServer.renderToStaticMarkup(
-        <Provider store={mockStore({ userSession: { token } })}>
+        <Provider store={mockStore({ userSession: { token }, intl: intl })}>
           <MemoryRouter>{serializeNodes(value || [])}</MemoryRouter>
         </Provider>,
       );
