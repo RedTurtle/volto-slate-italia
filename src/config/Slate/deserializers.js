@@ -54,6 +54,12 @@ export const bodyTagDeserializer = () => (editor, el, options) => {
   return jsx('fragment', {}, deserializeChildren(el, editor, options));
 };
 
+export const svgTagDeserializer = (tagname) => (editor, el, options) => {
+  //serve perchè il nostro UniversalLink mette l'svg per l'icona esterna
+  //quando dobbiamo deserializzare l'html quell'elemento non ci serve perchè slate non è in grado di renderizzarlo dentro all'editor
+  return jsx('text', {}, '');
+};
+
 export default function install(config) {
   config.settings.slate.htmlTagsToSlate.BODY = bodyTagDeserializer();
   config.settings.slate.htmlTagsToSlate.P = blockTagDeserializer('p');
@@ -61,6 +67,7 @@ export default function install(config) {
   config.settings.slate.htmlTagsToSlate.UL = blockTagDeserializer('ul');
   config.settings.slate.htmlTagsToSlate.BLOCKQUOTE =
     blockTagDeserializer('blockquote');
+  config.settings.slate.htmlTagsToSlate.svg = svgTagDeserializer();
 
   //A (link) deserializer is defined in ./Link/deserializer.js
 }
