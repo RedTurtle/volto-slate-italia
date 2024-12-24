@@ -16,10 +16,8 @@ import { useInView } from 'react-intersection-observer';
 import { SlateEditor } from '@plone/volto-slate/editor';
 import { serializeNodesToText } from '@plone/volto-slate/editor/render';
 import { handleKeyDetached } from '@plone/volto-slate/blocks/Text/keyboard';
-import {
-  uploadContent,
-  saveSlateBlockSelection,
-} from '@plone/volto-slate/actions';
+import { uploadContent } from '@plone/volto-slate/actions/content';
+import saveSlateBlockSelection from '@plone/volto-slate/actions/selection';
 import SimpleTextEditorWidget from 'volto-slate-italia/components/manage/Widgets/SimpleTextEditorWidget';
 import { breakList as customBreakList } from 'volto-slate-italia/config/Slate/extensions/breakList';
 import config from '@plone/volto/registry';

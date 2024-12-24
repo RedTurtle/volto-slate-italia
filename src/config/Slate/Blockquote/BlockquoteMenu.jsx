@@ -9,7 +9,7 @@ import {
   toggleStyle,
 } from 'volto-slate-italia/config/Slate/dropdownUtils';
 
-import { Icon } from '@plone/volto/components';
+import Icon from '@plone/volto/components/theme/Icon/Icon';
 import { ToolbarButton } from '@plone/volto-slate/editor/ui';
 
 import blockquoteSimpleIcon from 'volto-slate-italia/icons/blockquote-simple.svg';

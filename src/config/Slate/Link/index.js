@@ -13,8 +13,8 @@ import {
   _getActiveElement,
 } from '@plone/volto-slate/elementEditor/utils';
 import { SIMPLELINK } from '@plone/volto-slate/constants';
-import { useSelectionPosition } from '@plone/volto-slate/hooks';
-import { setPluginOptions } from '@plone/volto-slate/actions';
+import { useSelectionPosition } from '@plone/volto-slate/hooks/useSelectionPosition';
+import { setPluginOptions } from '@plone/volto-slate/actions/plugins';
 import { PositionedToolbar } from '@plone/volto-slate/editor/ui';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
 import { simpleLinkDeserializer } from 'volto-slate-italia/config/Slate/Link/deserializer';
