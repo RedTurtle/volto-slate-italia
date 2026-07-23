@@ -1,4 +1,7 @@
-// This is a wrapper around `Editor.nodes` that catches errors when the selection is invalid or out of bounds.
+/* CUSTOMIZATIONS
+This is a wrapper around `Editor.nodes` that catches errors when the selection is invalid or out of bounds.
+*/
+
 import { Editor } from 'slate';
 
 export function safeEditorNodes(editor, options) {

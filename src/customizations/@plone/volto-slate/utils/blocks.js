@@ -1,3 +1,9 @@
+/* CUSTOMIZATIONS
+Use safeEditorNodes instead of Editor.nodes in isSingleBlockTypeActive
+below, so that an invalid or out-of-bounds selection doesn't throw and
+break rendering; it logs a warning and returns no matches instead.
+*/
+
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
@@ -132,6 +138,7 @@ export function createParagraph(text) {
 }
 
 export const isSingleBlockTypeActive = (editor, format) => {
+  // customization
   const [match] = safeEditorNodes(editor, {
     match: (n) => n.type === format,
   });

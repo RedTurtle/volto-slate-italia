@@ -1,3 +1,9 @@
+/* CUSTOMIZATIONS
+Use safeEditorNodes instead of Editor.nodes below, so that an invalid or
+out-of-bounds selection doesn't throw and break the toolbar positioning;
+it logs a warning and returns no matches instead.
+*/
+
 import cx from 'classnames';
 import React, { useRef, useEffect } from 'react';
 import { useSlate } from 'slate-react';
@@ -46,6 +52,7 @@ const Toolbar = ({
     }
 
     if (elementType) {
+      // customization
       const [element] = safeEditorNodes(editor, {
         at: editor.selection || editor.getSavedSelection(),
         match: (n) => n.type === elementType,

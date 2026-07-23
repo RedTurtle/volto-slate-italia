@@ -1,3 +1,7 @@
+/* CUSTOMIZATIONS
+Test for safeEditorNodes, covering both the normal case and the error case 
+*/
+
 import { safeEditorNodes } from './safe.js';
 import { Editor } from 'slate';
 import { describe, it, expect, vi } from 'vitest';
