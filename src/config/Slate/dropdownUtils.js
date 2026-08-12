@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-import { Editor, Transforms } from 'slate';
+import { Editor, Transforms, Text } from 'slate';
 import { isBlockActive } from '@plone/volto-slate/utils';
 import config from '@plone/volto/registry';
 
@@ -10,8 +10,9 @@ export const toggleFormat = (editor, format, allowedChildren) => {
   Transforms.setNodes(editor, {
     type,
   });
-  const selectedChildren = editor.selection.focus.path[0];
+  const selectedChildren = editor.selection?.focus?.path[0];
   allowedChildren?.length &&
+    selectedChildren !== undefined &&
     Transforms.unwrapNodes(editor, {
       mode: 'all',
       at: [selectedChildren],
@@ -83,7 +84,7 @@ export const toggleBlockStyle = (
     // changeBlockToList(editor, format);
   } else if (!isListItem && !wantsList) {
     //se ho rimosso tutti gli stili devo rimuoverre anche il format
-    const selectedChildren = editor.selection.focus.path[0];
+    const selectedChildren = editor.selection?.focus?.path[0];
     if (format && editor.children?.[selectedChildren]?.type !== format) {
       toggleFormat(editor, format, allowedChildren);
     }
@@ -129,62 +130,75 @@ export const toggleInlineStyle = (editor, style, oneOf) => {
 
 export const isBlockStyleActive = (editor, style, oneOf) => {
   const keyName = `style-${style}`;
-  const sn = Array.from(
-    Editor.nodes(editor, {
-      match: (n) => {
-        const isStyle = typeof n.styleName === 'string' || n[keyName];
-        return !Editor.isEditor(n) && isStyle;
-      },
-      mode: 'all',
-    }),
-  );
+  try {
+    const sn = Array.from(
+      Editor.nodes(editor, {
+        match: (n) => {
+          const isStyle = typeof n.styleName === 'string' || n[keyName];
+          return !Editor.isEditor(n) && isStyle;
+        },
+        mode: 'all',
+      }),
+    );
 
-  if (oneOf) {
-    oneOf.sort((a, b) => {
-      const al = a.split(' ').length + a.split('-').length;
-      const bl = b.split(' ').length + b.split('-').length;
-      return al > bl ? -1 : al < bl ? 1 : 0;
-    });
-  }
+    if (oneOf) {
+      oneOf.sort((a, b) => {
+        const al = a.split(' ').length + a.split('-').length;
+        const bl = b.split(' ').length + b.split('-').length;
+        return al > bl ? -1 : al < bl ? 1 : 0;
+      });
+    }
 
-  for (const [n] of sn) {
-    if (typeof n.styleName === 'string') {
-      if (oneOf?.length > 0) {
-        let selected = false;
-        let foundOneOf = false;
+    for (const [n] of sn) {
+      if (typeof n.styleName === 'string') {
+        if (oneOf?.length > 0) {
+          let selected = false;
+          let foundOneOf = false;
 
-        for (var i = 0; i < oneOf.length; i++) {
-          const o = oneOf[i];
+          for (var i = 0; i < oneOf.length; i++) {
+            const o = oneOf[i];
 
-          const si = n.styleName.indexOf(o);
-          if (si >= 0) {
-            if (!foundOneOf) {
-              foundOneOf = true;
-              if (o === style) {
-                selected = true;
+            const si = n.styleName.indexOf(o);
+            if (si >= 0) {
+              if (!foundOneOf) {
+                foundOneOf = true;
+                if (o === style) {
+                  selected = true;
+                }
               }
             }
           }
+          return selected;
+        } else if (
+          n.styleName.split(' ').filter((x) => x === style).length > 0
+        ) {
+          return true;
         }
-        return selected;
-      } else if (n.styleName.split(' ').filter((x) => x === style).length > 0) {
+      } else if (
+        n[keyName] &&
+        keyName.split('style-').filter((x) => x === style).length > 0
+      )
         return true;
-      }
-    } else if (
-      n[keyName] &&
-      keyName.split('style-').filter((x) => x === style).length > 0
-    )
-      return true;
+    }
+  } catch (error) {
+    // the selection can momentarily point to a path that is not yet
+    // normalized (e.g. right after merging blocks), ignore and treat
+    // as not active
   }
   return false;
 };
 
 export const isInlineStyleActive = (editor, style) => {
-  const m = Editor.marks(editor);
   const keyName = `style-${style}`;
-
-  if (m && m[keyName]) {
-    return true;
+  try {
+    const m = Editor.marks(editor);
+    if (m && m[keyName]) {
+      return true;
+    }
+  } catch (error) {
+    // the selection can momentarily point to a path that is not yet
+    // normalized (e.g. right after merging blocks), ignore and treat
+    // as not active
   }
   return false;
 };
@@ -268,8 +282,15 @@ export const toggleInlineStyleAsListItem = (editor, style) => {
 };
 
 function toggleInlineStyleInSelection(editor, style) {
-  const m = Editor.marks(editor);
   const keyName = 'style-' + style;
+  let m;
+  try {
+    m = Editor.marks(editor);
+  } catch (error) {
+    // the selection can momentarily point to a path that is not yet
+    // normalized (e.g. right after merging blocks), nothing to toggle
+    return;
+  }
 
   if (m && m[keyName]) {
     Editor.removeMark(editor, keyName);
@@ -279,14 +300,21 @@ function toggleInlineStyleInSelection(editor, style) {
 }
 
 function toggleLinkStyleInSelection(editor, style, oneOf) {
-  const sn = Array.from(
-    Editor.nodes(editor, {
-      mode: 'all',
-      match: (n) => {
-        return !Editor.isEditor(n) && n.type === 'link';
-      },
-    }),
-  );
+  let sn;
+  try {
+    sn = Array.from(
+      Editor.nodes(editor, {
+        mode: 'all',
+        match: (n) => {
+          return !Editor.isEditor(n) && n.type === 'link';
+        },
+      }),
+    );
+  } catch (error) {
+    // the selection can momentarily point to a path that is not yet
+    // normalized (e.g. right after merging blocks), nothing to toggle
+    return;
+  }
 
   //ordino mettendo prima le combinazioni di classi
   if (oneOf) {
@@ -348,14 +376,21 @@ function toggleLinkStyleInSelection(editor, style, oneOf) {
 }
 
 function toggleBlockStyleInSelection(editor, style, oneOf, format, unwrap) {
-  const sn = Array.from(
-    Editor.nodes(editor, {
-      mode: 'highest',
-      match: (n) => {
-        return !Editor.isEditor(n);
-      },
-    }),
-  );
+  let sn;
+  try {
+    sn = Array.from(
+      Editor.nodes(editor, {
+        mode: 'highest',
+        match: (n) => {
+          return !Editor.isEditor(n);
+        },
+      }),
+    );
+  } catch (error) {
+    // the selection can momentarily point to a path that is not yet
+    // normalized (e.g. right after merging blocks), nothing to toggle
+    return;
+  }
 
   //ordino mettendo prima le combinazioni di classi
   if (oneOf) {
